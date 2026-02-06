@@ -49,6 +49,11 @@
             margin: 0 0 8px;
         }
 
+        h2 {
+            font-size: 0.8rem;
+            margin: 0 0 8px;
+        }
+
         p {
             margin: 0 0 18px;
             font-size: 1rem;
@@ -275,7 +280,7 @@
             <!-- Landing -->
             <div class="landing" id="landing">
                 <h1>Hi Dhruvu! 🌹</h1>
-                <p>Welcome to your little Valentine surprise. Are you ready for tiny quiz?</p>
+                <h2>Welcome to your little Valentine surprise. Are you ready for tiny quiz?</h2>
                 <button class="primary" id="startQuiz">Start Valentine Quiz</button>
             </div>
             <!-- Quiz -->
@@ -292,7 +297,7 @@
                     <div class="score-num" id="scoreNum">0 / 5</div>
                 </div>
             </div>
-            <!-- Final prompt after quiz -->
+            <!-- Final valentieneQuestion after quiz -->
             <div class="buttons" id="buttons">
                 <button id="yesBtn" aria-label="Yes">Yes</button>
                 <button id="noBtn" aria-label="No">No</button>
@@ -320,11 +325,13 @@
         const noBtn = document.getElementById('noBtn');
         const imageWrap = document.getElementById('imageWrap');
         const card = document.getElementById('card');
+        let valentieneQuestion;
+        let subQuestion;
         // Keep existing first four, enforce the 5th as final
         const quiz = [
             { text: 'Where did we meet for the first time?', options: ['At Lapinoz Pizza', 'At Chaiwala Cafe', 'At Chef Fatso'], answer: 1 },
             { text: 'On which date we had over chat first?', options: ['On 9th April', 'On 10th April', 'On 11th April'], answer: 0 },
-            { text: 'Which colour of shirt did I put on when we met for the first time?', options: ['Black', 'Blue', 'White'], answer: 1 },
+            { text: 'Which color of shirt i put on when we met first time?', options: ['Black', 'Blue', 'White'], answer: 1 },
             { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને?😂', options: ['હા', 'ના'], answer: 1 },
             { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને? પાકુ ને?😂', options: ['હા પાકુ', 'ના'], answer: 0 },
             // 5th is last
@@ -372,7 +379,7 @@
             qFeedback.className = 'feedback ok';
             score++;
             updateScoreUI();
-            spawnHearts(10, 1500);
+            spawnRedHearts(10, 1500);
             setTimeout(() => {
                 qIndex++;
                 if (qIndex < quiz.length) {
@@ -393,12 +400,12 @@
         startQuizBtn.addEventListener('click', startQuiz);
         function completeQuiz() {
             quizEl.style.display = 'none';
-            const prompt = document.createElement('h1');
-            prompt.textContent = 'Will you be my Valentine? ❤️';
-            const sub = document.createElement('p');
-            sub.textContent = "Try clicking “No.” If you do, I’ll buy you anything; otherwise, you have to buy me something😛!!";
-            card.insertBefore(sub, buttons);
-            card.insertBefore(prompt, sub);
+            valentieneQuestion = document.createElement('h1');
+            valentieneQuestion.textContent = 'Will you be my Valentine? ❤️';
+            subQuestion = document.createElement('h2');
+            subQuestion.textContent = "Try clicking “No.” If you do, I’ll buy you anything; otherwise, you have to buy me something!! 😛";
+            card.insertBefore(subQuestion, buttons);
+            card.insertBefore(valentieneQuestion, subQuestion);
             buttons.style.display = 'flex';
             spawnHearts(18, 2000);
             buttons.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -449,6 +456,8 @@
         });
         // Reveal on Yes
         function reveal() {
+            valentieneQuestion.remove();
+            subQuestion.remove();
             buttons.remove();
             imageWrap.style.display = 'block';
             spawnHearts(100, 20000);
@@ -461,6 +470,24 @@
                 const h = document.createElement('div');
                 h.className = 'heart';
                 h.textContent = '❤';
+                const startX = Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1;
+                const startY = window.innerHeight * 0.65 + Math.random() * 100;
+                const size = 16 + Math.random() * 14;
+                const duration = 1000 + Math.random() * maxDuration;
+                h.style.left = startX + 'px';
+                h.style.top = startY + 'px';
+                h.style.fontSize = size + 'px';
+                h.style.setProperty('--dur', duration + 'ms');
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), duration + 60);
+            }
+        }
+
+        function spawnRedHearts(count = 10, maxDuration = 2000) {
+            for (let i = 0; i < count; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart';
+                h.textContent = '❤️';
                 const startX = Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1;
                 const startY = window.innerHeight * 0.65 + Math.random() * 100;
                 const size = 16 + Math.random() * 14;
