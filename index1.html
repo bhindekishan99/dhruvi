@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Be My Valentine</title>
+    <style>
+        :root {
+            --bg: #fff0f5;
+            --text: #3a0030;
+            --btn: #ff4d88;
+            --btn-text: #fff;
+            --card: #ffffffcc;
+            --ok: #1a7f37;
+            --warn: #a15c00;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 30% 20%, #ffe1ec, var(--bg));
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 560px;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(6px);
+            border-radius: 16px;
+            padding: 28px 22px;
+            box-shadow: 0 10px 30px rgba(176, 0, 78, 0.18);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 8px;
+        }
+
+        p {
+            margin: 0 0 18px;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        /* Landing */
+        .landing {
+            margin-top: 6px;
+        }
+
+        .primary {
+            appearance: none;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 22px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--btn);
+            color: var(--btn-text);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Quiz */
+        .quiz {
+            display: none;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 14px;
+            border-radius: 12px;
+        }
+
+        .q-header {
+            font-weight: 700;
+            margin: 8px 0 10px;
+            color: var(--text);
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .opt {
+            background: #ffffff !important;
+            color: var(--text) !important;
+            border: 2px solid #ffb4cc;
+            border-radius: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            text-align: left;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .opt:active {
+            transform: scale(0.98);
+        }
+
+        .feedback {
+            min-height: 1.25em;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        .feedback.ok {
+            color: var(--ok) !important;
+        }
+
+        .feedback.warn {
+            color: var(--warn) !important;
+        }
+
+        /* Score meter below options */
+        .score {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .big-emoji {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .meter-wrap {
+            background: #ffe2ec;
+            height: 12px;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .meter {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff9cc4, #ff4d88);
+            border-radius: 999px;
+            transition: width 250ms ease;
+        }
+
+        .score-num {
+            font-weight: 800;
+            color: var(--text);
+            min-width: 52px;
+            text-align: right;
+        }
+
+        /* Yes/No column */
+        .buttons {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* for absolute No when dodging */
+            min-height: 120px;
+            margin-top: 10px;
+            padding: 12px;
+        }
+
+        button {
+            appearance: none;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 22px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease, color 0.2s ease;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
+            background: var(--btn);
+            color: var(--btn-text);
+            z-index: 1;
+        }
+
+        #yesBtn:active,
+        #noBtn:active {
+            transform: scale(0.96);
+        }
+
+        #yesBtn {
+            position: relative;
+            z-index: 2;
+        }
+
+        #noBtn {
+            position: static;
+        }
+
+        .btn-dodging {
+            position: absolute !important;
+            left: 0;
+            top: 0;
+            z-index: 1;
+        }
+
+        .image-wrap {
+            margin-top: 18px;
+            display: none;
+            animation: fadeIn 500ms ease forwards;
+        }
+
+        .image-wrap img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(176, 0, 78, 0.2);
+        }
+
+        .love-note {
+            margin-top: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Floating hearts */
+        .heart {
+            position: absolute;
+            color: #ff6fa0;
+            font-size: 18px;
+            opacity: 0.9;
+            animation: floatUp var(--dur, 1800ms) linear forwards;
+            pointer-events: none;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-300px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card" id="card">
+            <!-- Landing -->
+            <div class="landing" id="landing">
+                <h1>Hi Dhruvu! 🌹</h1>
+                <p>Welcome to your little Valentine surprise. Are you ready for tiny quiz?</p>
+                <button class="primary" id="startQuiz">Start Valentine Quiz</button>
+            </div>
+            <!-- Quiz -->
+            <div class="quiz" id="quiz">
+                <div class="q-header" id="qText"></div>
+                <div class="options" id="qOptions"></div>
+                <div class="feedback" id="qFeedback"></div>
+                <!-- Score meter below options -->
+                <div class="score" id="scoreBlock">
+                    <div class="big-emoji" id="bigEmoji" aria-live="polite">🙂</div>
+                    <div class="meter-wrap">
+                        <div class="meter" id="meter"></div>
+                    </div>
+                    <div class="score-num" id="scoreNum">0 / 5</div>
+                </div>
+            </div>
+            <!-- Final prompt after quiz -->
+            <div class="buttons" id="buttons">
+                <button id="yesBtn" aria-label="Yes">Yes</button>
+                <button id="noBtn" aria-label="No">No</button>
+            </div>
+            <!-- Reveal -->
+            <div class="image-wrap" id="imageWrap">
+                <img id="valImg" src="./IMG_5344.JPG" alt="A beautiful romantic scene" />
+                <div class="love-note">Yay! You made my heart smile. 💖</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Elements
+        const landing = document.getElementById('landing');
+        const startQuizBtn = document.getElementById('startQuiz');
+        const quizEl = document.getElementById('quiz');
+        const qText = document.getElementById('qText');
+        const qOptions = document.getElementById('qOptions');
+        const qFeedback = document.getElementById('qFeedback');
+        const meter = document.getElementById('meter');
+        const scoreNum = document.getElementById('scoreNum');
+        const bigEmoji = document.getElementById('bigEmoji');
+        const buttons = document.getElementById('buttons');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const imageWrap = document.getElementById('imageWrap');
+        const card = document.getElementById('card');
+        // Keep existing first four, enforce the 5th as final
+        const quiz = [
+            { text: 'On Which date we had over chat first?', options: ['At Lapinoz Pizza', 'At Chaiwala Cafe', 'At Chef Fatso'], answer: 1 },
+            { text: 'Where did we meet for first time?', options: ['On 9th April', 'On 10th April', 'On 11th April'], answer: 0 },
+            { text: 'Which color of shirt i put on when we met first time?', options: ['Black', 'Blue', 'White'], answer: 1 },
+            { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને?😂', options: ['હા', 'ના'], answer: 1 },
+            { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને? પાકુ ને?😂', options: ['હા પાકુ', 'ના'], answer: 0 },
+            // 5th is last
+            // { text: 'Will you be my Valentine? 💖', options: ['Yes! ❤️', 'Let me think…', 'Nope 😜'], answer: 0 }
+        ];
+        // Emoji progression for each correct answer
+        const happySteps = ['🙂', '😊', '😄', '😁', '😍'];
+        let qIndex = 0;
+        let score = 0;
+        function updateScoreUI() {
+            const pct = (score / quiz.length) * 100;
+            meter.style.width = pct + '%';
+            scoreNum.textContent = `${score} / ${quiz.length}`;
+            bigEmoji.textContent = happySteps[Math.min(score, happySteps.length - 1)];
+        }
+        function renderQuestion(qIndex) {
+            const q = quiz[qIndex];
+            qText.textContent = q.text;
+            qOptions.innerHTML = '';
+            qFeedback.textContent = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt';
+                btn.type = 'button';
+                btn.textContent = opt;
+                btn.addEventListener('click', () => handleAnswer(i));
+                qOptions.appendChild(btn);
+            });
+        }
+        function handleAnswer(i) {
+            const correct = i === quiz[qIndex].answer;
+            if (!correct) {
+                qFeedback.textContent = 'Try again, Dhuva! 💕';
+                qFeedback.className = 'feedback warn';
+                if (qIndex < 3) {
+                    setTimeout(() => {
+                        qFeedback.textContent = 'Bs ne bhuli gai ne...😢';
+                    }, 1000);
+                }
+                spawnSadEmoji(10, 1200);
+                return;
+            }
+            // correct
+            qFeedback.textContent = 'Perfect!';
+            qFeedback.className = 'feedback ok';
+            score++;
+            updateScoreUI();
+            spawnHearts(10, 1500);
+            setTimeout(() => {
+                qIndex++;
+                if (qIndex < quiz.length) {
+                    renderQuestion(qIndex);
+                } else {
+                    completeQuiz();
+                }
+            }, 0);
+        }
+        function startQuiz() {
+            landing.style.display = 'none';
+            quizEl.style.display = 'block';
+            qIndex = 0;
+            score = 0;
+            updateScoreUI();
+            renderQuestion(qIndex);
+        }
+        startQuizBtn.addEventListener('click', startQuiz);
+        function completeQuiz() {
+            quizEl.style.display = 'none';
+            const prompt = document.createElement('h1');
+            prompt.textContent = 'Will you be my Valentine? ❤️';
+            const sub = document.createElement('p');
+            sub.textContent = "Try clicking “No.” If you do, I’ll buy you anything; otherwise, you have to buy me something😛!!";
+            card.insertBefore(sub, buttons);
+            card.insertBefore(prompt, sub);
+            buttons.style.display = 'flex';
+            spawnHearts(18, 2000);
+            buttons.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // No button dodge logic
+        const clamp = (v, min, max) => Math.max(min, Math.min(v, max));
+        function ensureDodgingMode() {
+            if (!noBtn.classList.contains('btn-dodging')) {
+                const containerRect = buttons.getBoundingClientRect();
+                const btnRect = noBtn.getBoundingClientRect();
+                noBtn.classList.add('btn-dodging');
+                noBtn.style.left = (btnRect.left - containerRect.left) + 'px';
+                noBtn.style.top = (btnRect.top - containerRect.top) + 'px';
+            }
+        }
+        function moveNo() {
+            ensureDodgingMode();
+            const containerRect = buttons.getBoundingClientRect();
+            const noRect = noBtn.getBoundingClientRect();
+            const yesRect = yesBtn.getBoundingClientRect();
+            const padding = 12;
+            const minX = padding;
+            const minY = padding;
+            const maxX = containerRect.width - noRect.width - padding;
+            const maxY = containerRect.height - noRect.height - padding;
+            const yesLeft = yesRect.left - containerRect.left;
+            const yesTop = yesRect.top - containerRect.top;
+            const yesRight = yesLeft + yesRect.width;
+            const yesBottom = yesTop + yesRect.height;
+            const minYRespectYes = Math.max(minY, yesTop);
+            let attempt = 0, newX, newY;
+            do {
+                newX = Math.random() * (maxX - minX) + minX;
+                newY = Math.random() * (maxY - minYRespectYes) + minYRespectYes;
+                const noLeft = newX, noTop = newY;
+                const noRight = noLeft + noRect.width, noBottom = noTop + noRect.height;
+                const overlapsHoriz = !(noRight <= yesLeft || noLeft >= yesRight);
+                const overlapsVert = !(noBottom <= yesTop || noTop >= yesBottom);
+                const overlaps = overlapsHoriz && overlapsVert;
+                if (!overlaps) break;
+                attempt++;
+            } while (attempt < 20);
+            noBtn.style.left = clamp(newX, minX, maxX) + 'px';
+            noBtn.style.top = clamp(newY, minYRespectYes, maxY) + 'px';
+        }
+        ['mouseenter', 'touchstart', 'pointerdown', 'mouseover'].forEach(evt => {
+            noBtn.addEventListener(evt, (e) => { e.preventDefault(); moveNo(); }, { passive: false });
+        });
+        // Reveal on Yes
+        function reveal() {
+            buttons.remove();
+            imageWrap.style.display = 'block';
+            spawnHearts(100, 20000);
+            imageWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        yesBtn.addEventListener('click', reveal);
+        // Hearts
+        function spawnHearts(count = 10, maxDuration = 2000) {
+            for (let i = 0; i < count; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart';
+                h.textContent = '❤';
+                const startX = Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1;
+                const startY = window.innerHeight * 0.65 + Math.random() * 100;
+                const size = 16 + Math.random() * 14;
+                const duration = 1000 + Math.random() * maxDuration;
+                h.style.left = startX + 'px';
+                h.style.top = startY + 'px';
+                h.style.fontSize = size + 'px';
+                h.style.setProperty('--dur', duration + 'ms');
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), duration + 60);
+            }
+        }
+
+        function spawnSadEmoji(count = 10, maxDuration = 2000) {
+            for (let i = 0; i < count; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart';
+                h.textContent = '😢';
+                const startX = Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1;
+                // const startY = window.innerHeight * 0.65 + Math.random() * 40;
+                const startY = window.innerHeight * 0.7 + Math.random() * 100;
+                const size = 16 + Math.random() * 14;
+                const duration = 1000 + Math.random() * maxDuration;
+                h.style.left = startX + 'px';
+                h.style.top = startY + 'px';
+                h.style.fontSize = size + 'px';
+                h.style.setProperty('--dur', duration + 'ms');
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), duration + 60);
+            }
+        }
+        // Resize handling
+        window.addEventListener('resize', () => {
+            if (noBtn.classList.contains('btn-dodging')) moveNo();
+        });
+    </script>
+</body>
+
+</html>
