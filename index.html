@@ -330,10 +330,11 @@
         // Keep existing first four, enforce the 5th as final
         const quiz = [
             { text: 'Where did we meet for the first time?', options: ['At Lapinoz Pizza', 'At Chaiwala Cafe', 'At Chef Fatso'], answer: 1 },
-            { text: 'On which date we had over chat first?', options: ['On 9th April', 'On 10th April', 'On 11th April'], answer: 0 },
-            { text: 'Which color of shirt i put on when we met first time?', options: ['Black', 'Blue', 'White'], answer: 1 },
+            { text: 'When we had chat for the first?', options: ['On 9th April', 'On 10th April', 'On 11th April'], answer: 0 },
+            { text: 'Which color of shirt I put on when we met first time?', options: ['Black', 'Blue', 'White'], answer: 1 },
             { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને?😂', options: ['હા', 'ના'], answer: 1 },
             { text: 'તમને કોઈ ફોર્સ તો નથી કરતું ને? પાકુ ને?😂', options: ['હા પાકુ', 'ના'], answer: 0 },
+            { text: '"એ મેચિંગ થઇ ગ્યુ!!!😲" on which day??', options: ['On 15th April', 'On 16th April', 'On 17th April'], answer: 2 },
             // 5th is last
             // { text: 'Will you be my Valentine? 💖', options: ['Yes! ❤️', 'Let me think…', 'Nope 😜'], answer: 0 }
         ];
@@ -366,7 +367,7 @@
             if (!correct) {
                 qFeedback.textContent = 'Try again, Dhuva! 💕';
                 qFeedback.className = 'feedback warn';
-                if (qIndex < 3) {
+                if (qIndex < 3 || qIndex > 4) {
                     setTimeout(() => {
                         qFeedback.textContent = 'Bs ne bhuli gai ne...😢';
                     }, 1000);
@@ -403,7 +404,7 @@
             valentieneQuestion = document.createElement('h1');
             valentieneQuestion.textContent = 'Will you be my Valentine? ❤️';
             subQuestion = document.createElement('h2');
-            subQuestion.textContent = "Try clicking “No.” If you do, I’ll buy you anything; otherwise, you have to buy me something!! 😛";
+            subQuestion.textContent = "Go ahead, click “No.” If you do, I owe you anything you want! But it's your turn to treat me! 😜 Game on!";
             card.insertBefore(subQuestion, buttons);
             card.insertBefore(valentieneQuestion, subQuestion);
             buttons.style.display = 'flex';
