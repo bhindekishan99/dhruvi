@@ -461,6 +461,8 @@
             subQuestion.remove();
             buttons.remove();
             imageWrap.style.display = 'block';
+            const audio = new Audio("music.mp3");
+            audio.play();
             spawnHearts(100, 20000);
             imageWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
